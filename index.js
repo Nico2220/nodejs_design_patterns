@@ -1,1 +1,0 @@
-"Hellow commonjs js";
