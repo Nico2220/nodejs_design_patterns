@@ -1,3 +1,1 @@
-exports.hello = () => {
-  console.log("Hellow world");
-};
+import test from "./test";
