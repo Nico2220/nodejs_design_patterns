@@ -1,33 +1,58 @@
 import { EventEmitter } from "events";
 
-function ticker(number, cb) {
+// function ticker(number, cb) {
+//   const emitter = new EventEmitter();
+//   let count = 0;
+//   let timerId;
+//   const start = Date.now();
+
+//   timerId = setInterval(() => {
+//     const newDate = Date.now();
+//     const diff = newDate - start;
+
+//     if (diff >= number) {
+//       clearInterval(timerId);
+//       return cb(null, count);
+//     }
+
+//     e ;
+//   }, 50);
+
+//   return emitter;
+// }
+
+// ticker(1200, (err, data) => {
+//   if (err) {
+//     console.error("Errorrrr", err);
+//   }
+//   console.log("data", data);
+// }).on("tick", (diff) => console.log("diff=", diff));
+
+function ticker(number, callback) {
   const emitter = new EventEmitter();
   let count = 0;
-  let timerId;
-  const start = Date.now();
+  const TICK_INTERVAL = 50;
 
-  timerId = setInterval(() => {
-    const newDate = Date.now();
-    const diff = newDate - start;
-
+  let start = Date.now();
+  setTimeout(function recursiveTimeout() {
+    const diff = Date.now() - start;
     if (diff >= number) {
-      clearInterval(timerId);
-      return cb(null, count);
+      return callback(null, count);
     }
-
-    emitter.emit("tick", diff);
+    emitter.emit("tick", count);
     count++;
-  }, 50);
+    setTimeout(recursiveTimeout, TICK_INTERVAL);
+  }, TICK_INTERVAL);
 
   return emitter;
 }
 
-ticker(1200, (err, data) => {
+ticker(1200, (err, count) => {
   if (err) {
-    console.error("Errorrrr", err);
+    return;
   }
-  console.log("data", data);
-}).on("tick", (diff) => console.log("diff=", diff));
+  console.log("final count:", count);
+}).on("tick", (count) => console.log("count=", count));
 
 // function ticker(timer, callback) {
 //   const eventEmitter = new EventEmitter();
