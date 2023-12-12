@@ -25,7 +25,7 @@ function saveFile(filename, contents, cb) {
     .then((_) => {
       fs.writeFile(filename, contents, cb);
     })
-    .catch((err) => file);
+    .catch((err) => cb(err));
 }
 
 function download(url, filename, cb) {
