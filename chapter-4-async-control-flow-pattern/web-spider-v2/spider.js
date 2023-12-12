@@ -4,8 +4,17 @@ import superagent from "superagent";
 import { mkdirp } from "mkdirp";
 import { urlToFilename, getPageLinks } from "./utils.js";
 
+const spidering = new Set();
+
 export function spider(url, nesting, cb) {
+  //"v3" fix race conditions with concurrent tasks
+  if (spidering.has(url)) {
+    return process.nextTick(cb);
+  }
+  spidering.add(url);
+
   const filename = urlToFilename(url);
+
   fs.readFile(filename, "utf8", (err, fileContent) => {
     if (err) {
       if (err.code !== "ENOENT") {
@@ -53,25 +62,39 @@ function spiderLinks(currentUrl, body, nesting, cb) {
     return process.nextTick(cb);
   }
 
-  const links = getPageLinks(currentUrl, body); // [1]
+  const links = getPageLinks(currentUrl, body);
   if (links.length === 0) {
     return process.nextTick(cb);
   }
 
-  function iterate(index) {
-    // [2]
-    if (index === links.length) {
+  /** v2 */
+  //   function iterate(index) {
+  //     if (index === links.length) {
+  //       return cb();
+  //     }
+
+  //     spider(links[index], nesting - 1, function (err) {
+  //       if (err) {
+  //         return cb(err);
+  //       }
+  //       iterate(index + 1);
+  //     });
+  //   }
+
+  //   iterate(0);
+
+  /** v3 */
+  let completed = 0;
+  let hasErrors = false;
+  function done(err) {
+    if (err) {
+      hasErrors = true;
+      return cb(err);
+    }
+    if (++completed === links.length && !hasErrors) {
       return cb();
     }
-
-    spider(links[index], nesting - 1, function (err) {
-      // [3]
-      if (err) {
-        return cb(err);
-      }
-      iterate(index + 1);
-    });
   }
 
-  iterate(0); // [4]
+  links.forEach((link) => spider(link, nesting - 1, done));
 }
