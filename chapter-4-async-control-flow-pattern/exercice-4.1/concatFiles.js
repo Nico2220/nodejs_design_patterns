@@ -29,7 +29,7 @@ function concatFiles([...files], dest, cb) {
   iterate(0);
 }
 
-function concatFilesv2([...files], dest, cb) {
+function concatFilesv2(files, dest, cb) {
   const text = [];
   // read all the files concurrenly and register them
   files.forEach((filename, index) => {
