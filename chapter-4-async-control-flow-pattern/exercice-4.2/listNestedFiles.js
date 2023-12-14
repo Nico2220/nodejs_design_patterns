@@ -11,10 +11,12 @@ function listNestedFiles(directory, cb) {
       }
       results.push(directory);
       if (--pending === 0) {
-        cb(null, results);
+        process.nextTick(() => cb(null, results));
       }
     } else {
-      pending = files.length;
+      if (results.length === 0) {
+        pending = files.length;
+      }
       files.forEach((fileName) => {
         listNestedFiles(path.join(directory, fileName), cb);
       });
