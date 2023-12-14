@@ -14,13 +14,15 @@ export function urlToFilename(url) {
     //   return slug(component, { remove: null });
     // });
     .join("/");
-  console.log("filename=", urlPath);
 
   let filename = path.join(parsedUrl.hostname, urlPath);
 
   if (path.extname(filename).match("/html/")) {
     filename += ".html";
+    console.log("true");
   }
+  console.log("filename=", urlPath);
 
   return filename;
 }
+urlToFilename("https://nico2220.github.io/portfolio/");
