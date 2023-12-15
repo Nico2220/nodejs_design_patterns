@@ -25,4 +25,4 @@ export function urlToFilename(url) {
 
   return filename;
 }
-urlToFilename("https://nico2220.github.io/portfolio/");
+// urlToFilename("https://nico2220.github.io/portfolio/");
