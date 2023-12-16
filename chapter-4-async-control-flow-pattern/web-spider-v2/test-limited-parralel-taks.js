@@ -26,8 +26,9 @@ let index = 0;
 function next() {
   // [1]
   while (running < concurrency && index < tasks.length) {
-    const i = index++;
     console.log("running=", running);
+    const i = index++;
+    console.log("i=", i);
     const task = tasks[i];
     task(() => {
       console.log("second");

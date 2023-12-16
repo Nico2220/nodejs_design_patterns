@@ -84,33 +84,43 @@ function spiderLinks(currentUrl, body, nesting, cb) {
   //   iterate(0);
 
   /** v3 */
+  // let completed = 0;
+  // let hasErrors = false;
+  // function done(err) {
+  //   if (err) {
+  //     hasErrors = true;
+  //     return cb(err);
+  //   }
+  //   if (++completed === links.length && !hasErrors) {
+  //     return cb();
+  //   }
+  // }
+
+  // links.forEach((link) => spider(link, nesting - 1, done));
+  const concurrency = 2;
+  let running = 0;
   let completed = 0;
-  let hasErrors = false;
-  function done(err) {
-    if (err) {
-      hasErrors = true;
-      return cb(err);
-    }
-    if (++completed === links.length && !hasErrors) {
-      return cb();
+  let index = 0;
+
+  function next() {
+    // [1]
+    while (running < concurrency && index < links.length) {
+      const i = index++;
+      const link = links[i];
+
+      spider(link, nesting - 1, () => {
+        console.log("second");
+        if (++completed === links.length) {
+          return cb();
+        }
+        running--;
+        next();
+      });
+
+      console.log("first");
+      running++;
     }
   }
 
-  links.forEach((link) => spider(link, nesting - 1, done));
-}
-
-const tasks = [1, 2, 3];
-const concurrency = 2;
-let running = 0;
-let index = 0;
-function next() {
-  while (running < concurrency && index < tasks.length) {
-    const task = tasks[index++];
-    task(() => {
-      if (++completed === tasks.length) {
-        return finish();
-      }
-      run;
-    });
-  }
+  next();
 }
