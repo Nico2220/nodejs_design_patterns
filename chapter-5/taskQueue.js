@@ -27,23 +27,4 @@ export class TaskQueuePC {
       this.consurmerQueue.push(resolve);
     });
   }
-
-  runTask(task) {
-    return new Promise((resolve, reject) => {
-      const taskWrapper = () => {
-        const taskPromise = task();
-        taskPromise.then(resolve, reject);
-        return taskPromise;
-      };
-
-      if (this.consurmerQueue.length !== 0) {
-        // there is a sleeping consumer availble, use it to run our taks
-        const consumer = this.consurmerQueue.shift();
-        consumer(taskWrapper());
-      } else {
-        // all consumers are buzy, enqueue the task
-        this.taskQueue.push(taskWrapper);
-      }
-    });
-  }
 }
