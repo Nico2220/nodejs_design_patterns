@@ -14,9 +14,4 @@
 //   })
 // );
 
-const v = Promise.resolve(new Error("ops"));
-v.then((res) => {
-  console.log("r=", res);
-});
-
-console.log("hello");
+const r = await 5;
