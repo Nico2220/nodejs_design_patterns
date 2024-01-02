@@ -9,6 +9,7 @@ const server = createServer((req, res) => {
     res.write(`${chance.string()}\n`);
   }
   res.end("\n\n");
+  console.log("res=", res);
   res.on("finish", () => console.log("All data sent"));
 });
 
